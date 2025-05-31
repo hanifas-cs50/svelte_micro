@@ -5,7 +5,7 @@ const carsRoutes = require("./carsRoutes");
 const app = Fastify();
 
 app.register(cors, {
-  origin: "http://localhost:5173",
+  origin: "*",
   methods: ["GET"],
 });
 
@@ -13,7 +13,7 @@ app.get("/health", () => ({ status: "car-reader up" }));
 
 app.register(carsRoutes, { prefix: "/ms1" });
 
-app.listen({ port: 5001 }, (err, address) => {
+app.listen({ host: "0.0.0.0", port: 5001 }, (err, address) => {
   if (err) {
     console.error(err);
     process.exit(1);

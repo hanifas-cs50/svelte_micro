@@ -1,27 +1,6 @@
 <script lang="ts">
 	import '../app.css';
-	import { initializeCars } from '$lib/carStore';
 	import { page } from '$app/state';
-	import { onMount } from 'svelte';
-
-	let error = $state('');
-	let loading = $state(true);
-
-	async function fetchCars() {
-    error = '';
-    loading = true;
-		try {
-      await initializeCars();
-		} catch (err) {
-			error = (err as Error).message;
-		} finally {
-			loading = false;
-		}
-	}
-
-	onMount(async () => {
-		await fetchCars();
-	});
 
 	let { children } = $props();
 </script>
@@ -40,22 +19,15 @@
 		>
 			Add
 		</a>
+		<a
+			class={`border-b-2 ${page.url.pathname === '/logs' ? 'border-zinc-500' : 'border-transparent hover:border-zinc-500'}`}
+			href="/logs"
+		>
+			Logs
+		</a>
 	</div>
 </nav>
 
 <main class="mx-auto w-full max-w-screen-lg px-4">
-	{#if loading}
-		<p>Loading cars...</p>
-	{:else if !!error}
-		<div class="mb-4 rounded bg-red-200 p-2 text-red-800">{error}</div>
-		<button
-			class="w-full font-medium text-blue-500/80 underline hover:text-blue-500 cursor-pointer"
-			type="button"
-			onclick={() => fetchCars()}
-		>
-			Reload
-		</button>
-	{:else}
-		{@render children()}
-	{/if}
+	{@render children()}
 </main>

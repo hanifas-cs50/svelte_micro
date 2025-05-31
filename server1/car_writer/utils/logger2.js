@@ -1,20 +1,28 @@
 const fetch = require("node-fetch");
 
-async function logToServer2(action, data) {
+async function logToServer2(source, action, data) {
+  // console.log({
+  //   source,
+  //   action,
+  //   data,
+  //   timestamp: new Date().toISOString(),
+  // });
   try {
-    await fetch("http://localhost:5003/log", {
+    await fetch("http://localhost:5003/ms3/log", {
       method: "POST",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
+        source,
         action,
+        data,
         timestamp: new Date().toISOString(),
-        data
-      })
+      }),
     });
   } catch (err) {
     console.error("Failed to log to server2:", err.message);
+    throw new Error(`Failed to log to server2: ${err.message}`);
   }
 }
 

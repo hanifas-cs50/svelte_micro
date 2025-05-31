@@ -11,7 +11,7 @@ async function logToServer2(model, brand, price) {
     });
   } catch (err) {
     console.error(`Failed to log to server2: ${err.message}`);
-    throw new Error(`Failed to log to server2: ${err.message}`)
+    throw new Error(`Failed to log to server2: ${err.message}`);
   }
 }
 

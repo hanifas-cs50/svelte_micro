@@ -1,19 +1,19 @@
 const Fastify = require("fastify");
 const cors = require("@fastify/cors");
-const loggerRoutes = require("./loggerRoutes");
+const logsRoutes = require("./logsRoutes");
 
 const app = Fastify();
 
 app.register(cors, {
-  origin: "http://localhost:5002",
-  methods: ["GET", "POST"],
+  origin: "*",
+  methods: ["GET"],
 });
 
 app.get("/health", () => ({ status: "logger up" }));
 
-app.register(loggerRoutes, { prefix: "/ms3" });
+app.register(logsRoutes, { prefix: "/ms3" });
 
-app.listen({ port: 5003 }, (err, address) => {
+app.listen({ host: "0.0.0.0", port: 5003 }, (err, address) => {
   if (err) {
     console.error(err);
     process.exit(1);
