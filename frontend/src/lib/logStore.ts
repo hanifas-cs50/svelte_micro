@@ -11,8 +11,8 @@ type Log = {
 };
 
 const oriLogs = writable<Log[]>([]);
-export const logs = derived(oriLogs, (log) =>
-	log.map((log) => ({
+export const logs = derived(oriLogs, ($oriLogs) =>
+	$oriLogs.map((log) => ({
 		...log,
 		data: JSON.parse(log.data),
 		timestamp: new Date(log.timestamp).toLocaleString('id-ID', {
