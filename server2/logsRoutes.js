@@ -1,10 +1,9 @@
 async function logsRoutes(fastify, options) {
-  const { db, cars } = require("./db/index");
+  const { db, archive } = require("./db/index");
 
   fastify.get("/logs", async (request, reply) => {
     try {
-      const result = await db.select().from(cars);
-      return result;
+      return await db.select().from(archive);
     } catch (err) {
       console.error(err);
       reply.status(404).send({ error: "Logs not found" });
@@ -12,18 +11,19 @@ async function logsRoutes(fastify, options) {
   });
 
   fastify.post("/log", async (request, reply) => {
-    const { brand, model, price } = request.body;
+    const { id, brand, model, price } = request.body;
 
-    if (!brand || !model || price === undefined) {
+    if (!id || !brand?.trim() || !model?.trim() || price === null) {
       return reply
         .status(400)
         .send({ error: "Brand, model, and price are required." });
     }
 
     try {
-      await db.insert(cars).values({ brand, model, price });
+      await db.insert(archive).values({ cars_id: id, brand, model, price });
       reply.status(201).send({ message: "Log created" });
     } catch (err) {
+      console.error("DB insert failed: ", err);
       reply.status(500).send({ error: "Failed to create log" });
     }
   });

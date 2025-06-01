@@ -1,8 +1,8 @@
 const { drizzle } = require("drizzle-orm/better-sqlite3");
 const Database = require("better-sqlite3");
-const { cars } = require("./schema");
+const { archive } = require("./schema");
 
-const sqlite = new Database("logs.db");
-const db = drizzle(sqlite, { schema: cars });
+const sqlite = new Database("archive.db");
+const db = drizzle(sqlite, { schema: archive });
 
-module.exports = { db, cars };
+module.exports = { db, archive };

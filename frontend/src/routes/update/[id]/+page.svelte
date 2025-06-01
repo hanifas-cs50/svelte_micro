@@ -1,49 +1,65 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
-	import { editCar, getCar } from '$lib/carStore';
+	import { editCar, getCar, type Car } from '$lib/carStore';
+	import { onMount } from 'svelte';
 
+	let car = $state<Car | undefined>(undefined);
 	let error = $state('');
 	let loading = $state(false);
-	let id = parseInt(page.params.id, 10);
 
-	const car = !isNaN(id) ? getCar(id) : undefined;
-	if (car === undefined) {
-		error = 'Invalid car ID!';
-	}
+	const rawId = parseInt(page.params.id, 10);
+	const id = !isNaN(rawId) ? rawId : undefined;
 
-	async function onSubmit(e: SubmitEvent) {
-		e.preventDefault();
-		loading = true;
-
-		if (car === undefined) {
-			error = 'Invalid car ID! (Why did you do that?)';
-      loading = false;
+	const fetchCar = async () => {
+		if (id === undefined) {
+			error = 'Invalid car ID!';
 			return;
 		}
 
-		const form = e.currentTarget as HTMLFormElement;
-		const formData = new FormData(form);
+		error = '';
+		loading = true;
+
+		try {
+			car = await getCar(id);
+		} catch (err) {
+			error = (err as Error).message;
+		} finally {
+			loading = false;
+		}
+	};
+
+	onMount(fetchCar);
+
+	async function onSubmit(e: SubmitEvent) {
+		e.preventDefault();
+		if (car === undefined || id === undefined) {
+			error = 'Invalid car ID! (Why did you do that?)';
+			return;
+		}
+
+		error = '';
+		loading = true;
+
+		const formData = new FormData(e.currentTarget as HTMLFormElement);
 		const model = (formData.get('model') as string).trim();
 		const brand = (formData.get('brand') as string).trim();
-		const rawPrice = formData.get('price');
-		const price = rawPrice ? Number(rawPrice) : 0;
+		const price = Number(formData.get('price'));
 
-		if (model === '' || brand === '' || price <= 0) {
+		if (!model || !brand || isNaN(price) || price <= 0) {
 			error = 'All fields are required';
-      loading = false;
+			loading = false;
 			return;
 		}
 
 		try {
 			await editCar(id, model, brand, price);
-			form.reset();
 			goto('/');
 		} catch (err) {
 			error = (err as Error).message;
 		} finally {
-      loading = false;
-    }
+			loading = false;
+		}
 	}
 </script>
 
@@ -61,7 +77,7 @@
 			type="text"
 			id="model"
 			name="model"
-      defaultValue={car ? car.model : ""}
+			defaultValue={car ? car.model : ''}
 			autocomplete="off"
 			required
 		/>
@@ -73,7 +89,7 @@
 			type="text"
 			id="brand"
 			name="brand"
-      defaultValue={car ? car.brand : ""}
+			defaultValue={car ? car.brand : ''}
 			autocomplete="off"
 			required
 		/>
@@ -84,24 +100,26 @@
 			class="rounded border-2 border-zinc-500/60 px-2 py-1 font-medium text-zinc-800 outline-none hover:border-zinc-500 focus:border-zinc-500"
 			type="number"
 			id="price"
-      defaultValue={car ? car.price : ""}
+			defaultValue={car ? car.price : ''}
 			name="price"
-			min="0"
+			min="1"
 			max="99999"
 			required
 		/>
 	</div>
 
 	<button
-		class="mt-4 py-2 font-medium text-white cursor-pointer rounded bg-blue-500/90 hover:bg-blue-500 disabled:bg-zinc-500"
 		type="submit"
+		class="mt-4 cursor-pointer rounded bg-blue-500/90 py-2 font-medium text-white hover:bg-blue-500 disabled:bg-zinc-500"
 		disabled={car === undefined || loading}
 	>
-		{loading ? "Updating..." : "Update"}
+		{loading ? 'Updating...' : 'Update'}
 	</button>
 	<a
-		class="mt-1 py-2 text-center font-medium text-white rounded bg-zinc-500/90 hover:bg-zinc-500 {loading ? 'opacity-50' : ''}"
 		href={loading ? '#' : `/`}
+		class="mt-1 rounded bg-zinc-500/90 py-2 text-center font-medium text-white hover:bg-zinc-500 {loading
+			? 'opacity-50'
+			: ''}"
 	>
 		Back
 	</a>

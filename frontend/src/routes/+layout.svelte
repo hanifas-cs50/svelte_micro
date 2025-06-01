@@ -19,12 +19,6 @@
 		>
 			Add
 		</a>
-		<a
-			class={`border-b-2 ${page.url.pathname === '/logs' ? 'border-zinc-500' : 'border-transparent hover:border-zinc-500'}`}
-			href="/logs"
-		>
-			Logs
-		</a>
 	</div>
 </nav>
 
