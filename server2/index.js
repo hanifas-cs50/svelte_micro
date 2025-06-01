@@ -5,7 +5,7 @@ const logsRoutes = require("./logsRoutes");
 const app = Fastify();
 
 app.register(cors, {
-  origin: "http://localhost:5173",
+  origin: "http://192.168.0.68:5173",
   methods: ["GET"],
 });
 

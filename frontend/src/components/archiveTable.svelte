@@ -55,7 +55,7 @@
 				</tr>
 			{:else}
 				<tr>
-					<td class="border p-2" colspan="4">No data (yet...)</td>
+					<td class="border p-2" colspan="5">No data (yet...)</td>
 				</tr>
 			{/each}
 		</tbody>
