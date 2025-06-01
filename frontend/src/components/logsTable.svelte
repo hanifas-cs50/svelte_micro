@@ -20,7 +20,7 @@
 	onMount(fetchLogs);
 </script>
 
-<h3 class="mb-4 text-xl font-bold">Archives Table</h3>
+<h3 class="mb-4 text-xl font-bold">Logs Table</h3>
 
 {#if fetchLoading}
 	<p class="mb-4 rounded bg-zinc-200 p-2 text-zinc-800">Loading logs...</p>

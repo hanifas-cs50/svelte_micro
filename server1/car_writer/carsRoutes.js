@@ -55,7 +55,7 @@ async function carsRoutes(fastify, options) {
         await logToServer2({ ip, userAgent }, "PUT", { id, model, brand, price });
       } catch (logErr) {
         console.error("Logging failed: ", logErr);
-        reply.status(500).send({ error: "Failed to log transaction" });
+        return reply.status(500).send({ error: "Failed to log transaction" });
       }
 
       const result = await db
@@ -80,19 +80,19 @@ async function carsRoutes(fastify, options) {
     const { id } = request.params;
 
     try {
+      try {
+        await logToServer2({ ip, userAgent }, "DELETE", { id });
+      } catch (logErr) {
+        console.error("Logging failed: ", logErr);
+        return reply.status(500).send({ error: "Failed to log transaction" });
+      }
+
       const result = await db.delete(cars).where(eq(cars.id, id));
 
       if (result.rowCount === 0) {
         return reply.status(404).send({ error: "Car not found" });
       }
-
-      try {
-        await logToServer2({ ip, userAgent }, "DELETE", { id });
-      } catch (logErr) {
-        console.error("Logging failed: ", logErr);
-        reply.status(500).send({ error: "Failed to log transaction" });
-      }
-
+      
       reply.status(201).send({ message: "Car deleted" });
     } catch (err) {
       console.error("DB delete failed: ", err);
