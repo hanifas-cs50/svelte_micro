@@ -1,12 +1,6 @@
 const fetch = require("node-fetch");
 
 async function logToServer2(source, action, data) {
-  // console.log({
-  //   source,
-  //   action,
-  //   data,
-  //   timestamp: new Date().toISOString(),
-  // });
   try {
     await fetch("http://localhost:5003/ms3/log", {
       method: "POST",

@@ -5,7 +5,7 @@ const carsRoutes = require("./carsRoutes");
 const app = Fastify();
 
 app.register(cors, {
-  origin: "*",
+  origin: "http://192.168.0.68:5173",
   methods: ["GET"],
 });
 

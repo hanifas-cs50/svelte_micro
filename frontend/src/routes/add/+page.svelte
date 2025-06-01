@@ -10,22 +10,19 @@
 		error = '';
 		loading = true;
 
-		const form = e.currentTarget as HTMLFormElement;
-		const formData = new FormData(form);
+		const formData = new FormData(e.currentTarget as HTMLFormElement);
 		const model = (formData.get('model') as string).trim();
 		const brand = (formData.get('brand') as string).trim();
-		const rawPrice = formData.get('price');
-		const price = rawPrice ? Number(rawPrice) : 0;
+		const price = Number(formData.get('price'));
 
-		if (model === '' || brand === '' || price <= 0) {
+		if (!model || !brand || isNaN(price) || price <= 0) {
 			error = 'All fields are required';
-      loading = false;
+			loading = false;
 			return;
 		}
 
 		try {
 			await addCar(model, brand, price);
-			form.reset();
 			goto('/');
 		} catch (err) {
 			error = (err as Error).message;
