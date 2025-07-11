@@ -33,9 +33,28 @@
 	};
 
 	onMount(fetchCars);
+
+	let searchQuery = $state('');
+	let filtered = $derived.by(() => {
+		let fCars = $cars.filter(
+			(car) =>
+				car.brand.toLocaleLowerCase().includes(searchQuery.toLowerCase()) ||
+				car.model.toLocaleLowerCase().includes(searchQuery.toLowerCase())
+		);
+		return fCars;
+	});
 </script>
 
 <h3 class="mb-4 text-xl font-bold">Cars Table</h3>
+
+<div class="mb-4">
+	<input
+		type="text"
+		bind:value={searchQuery}
+		placeholder="Search cars by model or brand..."
+		class="mx-auto w-full max-w-sm rounded border p-2"
+	/>
+</div>
 
 {#if fetchLoading}
 	<p class="mb-4 rounded bg-zinc-200 p-2 text-zinc-800">Loading archives...</p>
@@ -52,12 +71,12 @@
 	{#if deleteError}
 		<div class="mb-4 rounded bg-red-200 p-2 text-red-800">{deleteError}</div>
 	{/if}
-  
+
 	<table class="mb-4 w-full border-collapse">
 		<thead>
 			<tr>
 				<th class="w-14 border p-2">No.</th>
-        <th class="w-20 border p-2">Cars ID</th>
+				<th class="w-20 border p-2">Cars ID</th>
 				<th class="border p-2">Model</th>
 				<th class="border p-2">Brand</th>
 				<th class="border p-2">Price</th>
@@ -65,7 +84,7 @@
 			</tr>
 		</thead>
 		<tbody class="text-center">
-			{#each $cars as { id, model, brand, price }, i (id)}
+			{#each filtered as { id, model, brand, price }, i (id)}
 				<tr>
 					<td class="border p-2">{i + 1}.</td>
 					<td class="border p-2">{id}</td>
